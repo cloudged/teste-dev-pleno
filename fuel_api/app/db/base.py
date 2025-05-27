@@ -1,3 +1,3 @@
-from app.db.models.combustivel import Combustivel
+from sqlalchemy.orm import declarative_base
 
-__all__ = ["Combustivel"]
+Base = declarative_base()
