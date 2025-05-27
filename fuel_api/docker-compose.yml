@@ -1,0 +1,22 @@
+services:
+  postgres_db:
+    image: postgres:15
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: fuel_user
+      POSTGRES_PASSWORD: fuel_password
+      POSTGRES_DB: fuel_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fuel_network
+
+volumes:
+  postgres_data:
+
+networks:
+  fuel_network:
+    driver: bridge
