@@ -15,3 +15,9 @@ def get_precos_venda(
         query = query.filter(RefVenda.mes == mes)
     
     return query.all()
+
+def buscar_referencia(db: Session, combustivel_id: int, mes: int):
+    return db.query(RefVenda).filter(
+        RefVenda.combustivel_id == combustivel_id,
+        RefVenda.mes == mes
+    ).first()

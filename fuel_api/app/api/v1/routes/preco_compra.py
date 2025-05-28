@@ -12,5 +12,4 @@ router = APIRouter()
 @router.get("/ref_compra", response_model=List[PrecoCompra])
 def listar_ref_compra( combustivel_id: Optional[int] = Query(None),
     mes: Optional[int] = Query(None), db: Session = Depends(get_db)):
-    resultados = db.query(RefCompra).all()
     return get_precos_compra(db, combustivel_id=combustivel_id, mes=mes)

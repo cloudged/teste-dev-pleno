@@ -20,6 +20,17 @@ CREATE TABLE IF NOT EXISTS ref_venda (
     tributo DECIMAL(5, 2) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS operacoes (
+    id SERIAL PRIMARY KEY,
+    combustivel_id INTEGER NOT NULL REFERENCES combustivel(id),
+    tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('compra', 'venda')),
+    data DATE NOT NULL,
+    ref_id INTEGER NOT NULL,
+    litros DECIMAL(10, 2) NOT NULL,
+    valor DECIMAL(15, 2) NOT NULL,
+    selic DECIMAL(5, 2) NOT NULL
+);
+
 -- Inserção dos combustíveis
 INSERT INTO combustivel (nome) VALUES 
 ('Etanol'),

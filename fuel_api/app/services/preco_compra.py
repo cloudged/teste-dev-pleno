@@ -15,3 +15,10 @@ def get_precos_compra(
         query = query.filter(RefCompra.mes == mes)
     
     return query.all()
+
+
+def buscar_referencia(db: Session, combustivel_id: int, mes: int):
+    return db.query(RefCompra).filter(
+        RefCompra.combustivel_id == combustivel_id,
+        RefCompra.mes == mes
+    ).first()

@@ -3,7 +3,7 @@ from app.db.session import engine, Base
 
 
 
-from app.api.v1.routes import combustiveis, preco_compra, preco_venda
+from app.api.v1.routes import combustiveis, preco_compra, preco_venda, operacoes
 
 app = FastAPI()
 
@@ -14,6 +14,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(combustiveis.router, prefix="/api/v1")
 app.include_router(preco_compra.router, prefix="/api/v1", tags=["ref_compra"])
 app.include_router(preco_venda.router, prefix="/api/v1", tags=["ref_venda"])
+app.include_router(operacoes.router, prefix="/api/v1", tags=["operacoes"])
 
 
 # Dependência para pegar a sessão DB nas rotas
