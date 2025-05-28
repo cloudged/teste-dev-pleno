@@ -6,3 +6,7 @@ class CombustivelSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class CombustivelResponse(BaseModel):
+    id: int
+    nome: str
