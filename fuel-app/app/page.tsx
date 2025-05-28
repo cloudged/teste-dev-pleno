@@ -1,103 +1,226 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import type React from "react";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { CombustiveisService } from "./services/combustiveis.service";
+import { OperacoesService } from "./services/operacoes.service";
+import {
+  CombustivelResponse,
+  OperacaoCreate,
+  OperacaoResponse,
+  OperacaoCreateTipoEnum,
+} from "./api/client/api";
+
+export default function FuelOperationsPage() {
+  const [fuelTypes, setFuelTypes] = useState<CombustivelResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    combustivel_id: "",
+    tipo: "",
+    data: "",
+    litros: "",
+  });
+  const operationTypes: OperacaoCreateTipoEnum[] = ["compra", "venda"];
+
+  useEffect(() => {
+    const fetchFuelTypes = async () => {
+      try {
+        const response = await CombustiveisService.listar();
+        if (response) {
+          setFuelTypes(response);
+        } else {
+          toast.error("Erro ao carregar combustíveis");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Erro de conexão ao carregar tipos de combustível");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFuelTypes();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !formData.combustivel_id ||
+      !formData.tipo ||
+      !formData.data ||
+      !formData.litros
+    ) {
+      toast("Preencha todos os campos antes de registrar uma nova operação");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const payload: OperacaoCreate = {
+        combustivel_id: Number.parseInt(formData.combustivel_id),
+        tipo: operationTypes[Number.parseInt(formData.tipo)],
+        data: formData.data,
+        litros: Number.parseFloat(formData.litros),
+        selic: 11.5,
+      };
+
+      const response: OperacaoResponse = await OperacoesService.postOperation(
+        payload
+      );
+
+      if (response) {
+        toast.success("Operação registrada com sucesso");
+
+        setFormData({
+          combustivel_id: "",
+          tipo: "",
+          data: "",
+          litros: "",
+        });
+      } else {
+        toast.error("Falha ao registrar operação");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro de conexão ao registrar operação");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Carregando...</span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>Controle de Operações de Combustível</CardTitle>
+            <CardDescription>
+              Registre operações de compra e venda de combustível
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fuel-type">Tipo de Combustível</Label>
+                  <Select
+                    value={formData.combustivel_id}
+                    onValueChange={(value) =>
+                      handleInputChange("combustivel_id", value)
+                    }
+                  >
+                    <SelectTrigger id="fuel-type">
+                      <SelectValue placeholder="Selecione o combustível" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fuelTypes.map((fuel) => (
+                        <SelectItem key={fuel.id} value={fuel.id.toString()}>
+                          {fuel.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="operation-type">Tipo de Operação</Label>
+                  <Select
+                    value={formData.tipo}
+                    onValueChange={(value) => handleInputChange("tipo", value)}
+                  >
+                    <SelectTrigger id="operation-type">
+                      <SelectValue placeholder="Selecione a operação" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Compra</SelectItem>
+                      <SelectItem value="1">Venda</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="date">Data</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={formData.data}
+                    onChange={(e) => handleInputChange("data", e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="liters">Litros</Label>
+                  <Input
+                    id="liters"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    value={formData.litros}
+                    onChange={(e) =>
+                      handleInputChange("litros", e.target.value)
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Registrando...
+                  </>
+                ) : (
+                  "Registrar Operação"
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
