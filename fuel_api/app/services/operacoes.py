@@ -2,11 +2,13 @@ from sqlalchemy.orm import Session
 from app.db.models.operacoes import Operacao
 from app.schemas.operacoes import OperacaoCreate
 from datetime import date
+from app.services.balanco import atualizar_balanco
 
 from app.services import preco_compra, preco_venda
 
 
 def criar_operacao(db: Session, operacao_in: OperacaoCreate):
+    ano = operacao_in.data.year
     mes = operacao_in.data.month
     tipo = operacao_in.tipo.lower()
 
@@ -39,5 +41,7 @@ def criar_operacao(db: Session, operacao_in: OperacaoCreate):
     db.add(db_operacao)
     db.commit()
     db.refresh(db_operacao)
+
+    atualizar_balanco(db, tipo=operacao_in.tipo, ano=ano, valor=valor)
 
     return db_operacao

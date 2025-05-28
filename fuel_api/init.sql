@@ -31,6 +31,14 @@ CREATE TABLE IF NOT EXISTS operacoes (
     selic DECIMAL(5, 2) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS balanco (
+    id SERIAL PRIMARY KEY,
+    tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('compra', 'venda')),
+    ano INTEGER NOT NULL,
+    total DECIMAL(15, 2) NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Inserção dos combustíveis
 INSERT INTO combustivel (nome) VALUES 
 ('Etanol'),
