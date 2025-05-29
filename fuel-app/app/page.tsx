@@ -30,11 +30,13 @@ import {
   OperacaoResponse,
   OperacaoCreateTipoEnum,
 } from "./api/client/api";
+import { BalanceCard } from "../components/balance-card.component"
 
 export default function FuelOperationsPage() {
   const [fuelTypes, setFuelTypes] = useState<CombustivelResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [formData, setFormData] = useState({
     combustivel_id: "",
     tipo: "",
@@ -100,6 +102,8 @@ export default function FuelOperationsPage() {
           data: "",
           litros: "",
         });
+
+        setRefreshTrigger(prev => prev + 1)
       } else {
         toast.error("Falha ao registrar operação");
       }
@@ -131,7 +135,7 @@ export default function FuelOperationsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Controle de Operações de Combustível</CardTitle>
@@ -220,6 +224,7 @@ export default function FuelOperationsPage() {
             </form>
           </CardContent>
         </Card>
+        <BalanceCard refreshTrigger={refreshTrigger}/>
       </div>
     </div>
   );
