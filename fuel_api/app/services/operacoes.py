@@ -26,7 +26,7 @@ def criar_operacao(db: Session, operacao_in: OperacaoCreate):
     preco = float(ref.preco)
     tributo = float(ref.tributo)
 
-    valor = preco * float(operacao_in.litros) * tributo * float(operacao_in.selic)
+    valor = preco * operacao_in.litros * (1 + tributo/100) * (1 + operacao_in.selic/100)
 
     db_operacao = Operacao(
         combustivel_id=operacao_in.combustivel_id,
