@@ -25,25 +25,25 @@ import { Loader2 } from "lucide-react";
 import { CombustiveisService } from "./services/combustiveis.service";
 import { OperacoesService } from "./services/operacoes.service";
 import {
-  CombustivelResponse,
-  OperacaoCreate,
-  OperacaoResponse,
-  OperacaoCreateTipoEnum,
+  FuelResponse,
+  OrderCreate,
+  OrderResponse,
+  OrderCreateTipoEnum,
 } from "./api/client/api";
 import { BalanceCard } from "../components/balance-card.component"
 
 export default function FuelOperationsPage() {
-  const [fuelTypes, setFuelTypes] = useState<CombustivelResponse[]>([]);
+  const [fuelTypes, setFuelTypes] = useState<FuelResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [formData, setFormData] = useState({
-    combustivel_id: "",
+    fuel_id: "",
     tipo: "",
     data: "",
     litros: "",
   });
-  const operationTypes: OperacaoCreateTipoEnum[] = ["compra", "venda"];
+  const operationTypes: OrderCreateTipoEnum[] = ["compra", "venda"];
 
   useEffect(() => {
     const fetchFuelTypes = async () => {
@@ -69,7 +69,7 @@ export default function FuelOperationsPage() {
     e.preventDefault();
 
     if (
-      !formData.combustivel_id ||
+      !formData.fuel_id ||
       !formData.tipo ||
       !formData.data ||
       !formData.litros
@@ -81,15 +81,15 @@ export default function FuelOperationsPage() {
     setSubmitting(true);
 
     try {
-      const payload: OperacaoCreate = {
-        combustivel_id: Number.parseInt(formData.combustivel_id),
+      const payload: OrderCreate = {
+        fuel_id: Number.parseInt(formData.fuel_id),
         tipo: operationTypes[Number.parseInt(formData.tipo)],
         data: formData.data,
         litros: Number.parseFloat(formData.litros),
         selic: 11.5,
       };
 
-      const response: OperacaoResponse = await OperacoesService.postOperation(
+      const response: OrderResponse = await OperacoesService.postOperation(
         payload
       );
 
@@ -97,7 +97,7 @@ export default function FuelOperationsPage() {
         toast.success("Operação registrada com sucesso");
 
         setFormData({
-          combustivel_id: "",
+          fuel_id: "",
           tipo: "",
           data: "",
           litros: "",
@@ -149,9 +149,9 @@ export default function FuelOperationsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="fuel-type">Tipo de Combustível</Label>
                   <Select
-                    value={formData.combustivel_id}
+                    value={formData.fuel_id}
                     onValueChange={(value) =>
-                      handleInputChange("combustivel_id", value)
+                      handleInputChange("fuel_id", value)
                     }
                   >
                     <SelectTrigger id="fuel-type">

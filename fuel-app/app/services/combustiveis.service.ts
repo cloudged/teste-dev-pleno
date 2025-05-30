@@ -1,6 +1,6 @@
 import {
-    CombustiveisApi,
-    CombustivelResponse,
+    FuelApi,
+    FuelResponse,
     Configuration,
   } from '../api/client/index';
   
@@ -8,11 +8,11 @@ import {
     basePath:  process.env.NEXT_PUBLIC_API_BASE_URL,
   });
   
-  const api = new CombustiveisApi(configuration);
+  const api = new FuelApi(configuration);
   
   export const CombustiveisService = {
-    async listar(): Promise<CombustivelResponse[]> {
-      const response = await api.getCombustiveisApiV1CombustiveisGet();
+    async listar(): Promise<FuelResponse[]> {
+      const response = await api.getFuelsApiV1FuelGet();
       return response.data;
     },
   };

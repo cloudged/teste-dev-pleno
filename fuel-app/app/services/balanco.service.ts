@@ -1,6 +1,6 @@
 import {
-    BalancoApi,
-    BalancoConsultaResponse,
+    BalanceApi,
+    BalanceResponse,
     Configuration,
   } from '../api/client/index';
   
@@ -8,11 +8,11 @@ import {
     basePath:  process.env.NEXT_PUBLIC_API_BASE_URL,
   });
   
-  const api = new BalancoApi(configuration);
+  const api = new BalanceApi(configuration);
   
   export const BalancoService = {
-    async getBalancos(): Promise<BalancoConsultaResponse> {
-      const response = await api.obterBalancoApiV1BalancoGet(2024);
+    async getBalancos(): Promise<BalanceResponse> {
+      const response = await api.getBalanceApiV1BalanceGet(2024);
       return response.data;
     },
   };
