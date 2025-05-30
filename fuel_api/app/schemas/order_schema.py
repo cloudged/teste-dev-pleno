@@ -3,8 +3,8 @@ from datetime import date
 from typing import Literal
 
 
-class OperacaoCreate(BaseModel):
-    combustivel_id: int = Field(..., description="ID do combustível")
+class OrderCreate(BaseModel):
+    fuel_id: int = Field(..., description="ID do combustível")
     tipo: Literal["compra", "venda"] = Field(..., description="Tipo da operação: compra ou venda")
     data: date = Field(..., description="Data da operação")
     litros: float = Field(..., gt=0, description="Quantidade de litros")
@@ -14,9 +14,9 @@ class OperacaoCreate(BaseModel):
         from_attributes = True
 
 
-class OperacaoResponse(BaseModel):
+class OrderResponse(BaseModel):
     id: int
-    combustivel_id: int
+    fuel_id: int
     tipo: str
     data: date
     ref_id: int

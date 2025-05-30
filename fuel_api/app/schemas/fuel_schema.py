@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
-class CombustivelSchema(BaseModel):
+class FuelSchema(BaseModel):
     id: int
     nome: str
 
     class Config:
         orm_mode = True
 
-class CombustivelResponse(BaseModel):
+class FuelResponse(BaseModel):
     id: int
     nome: str

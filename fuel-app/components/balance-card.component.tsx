@@ -12,20 +12,20 @@ import { Loader2, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import { BalancoService } from "../app/services/balanco.service";
 
-import { BalancoConsultaResponse } from "../app/api/client/api";
+import { BalanceResponse } from "../app/api/client/api";
 
 interface ChildProps {
   refreshTrigger: number;
 }
 
 export const BalanceCard = ({ refreshTrigger }: ChildProps) => {
-  const [balance, setBalance] = useState<BalancoConsultaResponse | null>(null);
+  const [balance, setBalance] = useState<BalanceResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAudit = async () => {
       try {
-        const response: BalancoConsultaResponse =
+        const response: BalanceResponse =
           await BalancoService.getBalancos();
         if (response) {
           setBalance(response);

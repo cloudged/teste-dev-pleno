@@ -4,10 +4,10 @@ from app.db.session import Base
 
 
 class Operacao(Base):
-    __tablename__ = "operacoes"
+    __tablename__ = "fuel_order"
 
     id = Column(Integer, primary_key=True, index=True)
-    combustivel_id = Column(Integer, ForeignKey("combustivel.id"), nullable=False)
+    fuel_id = Column(Integer, ForeignKey("fuel.id"), nullable=False)
     tipo = Column(String(10), nullable=False)
     data = Column(Date, nullable=False)
     ref_id = Column(Integer, nullable=False)
@@ -15,7 +15,7 @@ class Operacao(Base):
     valor = Column(Numeric(15, 2), nullable=False)
     selic = Column(Numeric(5, 2), nullable=False)
 
-    combustivel = relationship("Combustivel")
+    fuel = relationship("Fuel")
 
     __table_args__ = (
         CheckConstraint("tipo IN ('compra', 'venda')", name="check_tipo_operacao"),

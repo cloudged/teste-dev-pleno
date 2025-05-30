@@ -1,17 +1,17 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from app.db.models.balanco import Balanco
+from app.models.balance_model import Balance
 
 
-def atualizar_balanco(db: Session, tipo: str, ano: int, valor: float):
-    balanco = db.query(Balanco).filter(
-        and_(Balanco.tipo == tipo, Balanco.ano == ano)
+def update_balance(db: Session, tipo: str, ano: int, valor: float):
+    balanco = db.query(Balance).filter(
+        and_(Balance.tipo == tipo, Balance.ano == ano)
     ).first()
 
     if balanco:
         balanco.total += valor
     else:
-        balanco = Balanco(
+        balanco = Balance(
             tipo=tipo,
             ano=ano,
             total=valor
@@ -23,13 +23,13 @@ def atualizar_balanco(db: Session, tipo: str, ano: int, valor: float):
     return balanco
 
 
-def consultar_balanco_por_ano(db: Session, ano: int):
-    compras = db.query(Balanco).filter(
-        and_(Balanco.ano == ano, Balanco.tipo == "compra")
+def consult_balance_by_year(db: Session, ano: int):
+    compras = db.query(Balance).filter(
+        and_(Balance.ano == ano, Balance.tipo == "compra")
     ).first()
 
-    vendas = db.query(Balanco).filter(
-        and_(Balanco.ano == ano, Balanco.tipo == "venda")
+    vendas = db.query(Balance).filter(
+        and_(Balance.ano == ano, Balance.tipo == "venda")
     ).first()
 
     total_compra = compras.total if compras else 0.0
